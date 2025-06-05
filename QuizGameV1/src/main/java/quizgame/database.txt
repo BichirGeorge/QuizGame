@@ -1,0 +1,216 @@
+---------------------------------------------------------------------------------------------------------
+--------------------------------------------------
+-- Crearea tabelului Users
+CREATE TABLE Users (
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL UNIQUE,
+    Password VARCHAR(100) NOT NULL,
+    Role VARCHAR(20) NOT NULL CHECK (Role IN ('PLAYER', 'ADMIN'))
+);
+
+-- Crearea tabelului Players
+CREATE TABLE Players (
+    UserId INT PRIMARY KEY,
+    Score INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE
+);
+
+
+-- Crearea tabelului Achievements
+CREATE TABLE Achievements (
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description TEXT
+);
+
+-- Crearea tabelului Topics
+CREATE TABLE Topics (
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Description TEXT
+);
+
+-- Crearea tabelului PlayerAchievements
+CREATE TABLE PlayerAchievements (
+    PlayerId INT,
+    AchievementId INT,
+    DateAwarded DATE,
+    PRIMARY KEY (PlayerId, AchievementId),
+    FOREIGN KEY (PlayerId) REFERENCES Players(UserId) ON DELETE CASCADE,
+    FOREIGN KEY (AchievementId) REFERENCES Achievements(Id) ON DELETE CASCADE
+);
+
+-- Crearea tabelului Questions
+CREATE TABLE Questions (
+    Id SERIAL PRIMARY KEY,
+    TopicId INT,
+    QuestionText TEXT NOT NULL,
+    Option1 TEXT NOT NULL,
+    Option2 TEXT NOT NULL,
+    Option3 TEXT NOT NULL,
+    Option4 TEXT NOT NULL,
+    CorrectAnswerIndex INT NOT NULL,
+    FOREIGN KEY (TopicId) REFERENCES Topics(Id) ON DELETE CASCADE
+);
+
+-- Crearea tabelului GameSessions
+CREATE TABLE GameSessions (
+    Id SERIAL PRIMARY KEY,
+    PlayerId INT,
+    TopicId INT,
+    Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (PlayerId) REFERENCES Players(UserId) ON DELETE CASCADE,
+    FOREIGN KEY (TopicId) REFERENCES Topics(Id) ON DELETE CASCADE
+);
+
+---------------------------------------------------
+
+achievementService.createAchievement("Perfect Score", "Answer all questions correctly.");
+achievementService.createAchievement("First Quiz", "Complete the first quiz.");
+achievementService.createAchievement("First Login", "Log in to the quiz game for the first time.");
+
+
+            boolean topicSuccess = topicService.createTopic("Geografie", "Intrebari imposibile");
+
+            if (topicSuccess) {
+                Question q1 = Question.builder(1, "Care este capitala Romaniei?")
+                        .option1("Bucuresti")
+                        .option2("Cluj-Napoca")
+                        .option3("Iasi")
+                        .option4("Timisoara")
+                        .correctAnswerIndex(1)
+                        .build();
+
+                Question q2 = Question.builder(1, "Care este cel mai lung fluviu din Europa?")
+                        .option1("Dunarea")
+                        .option2("Volga")
+                        .option3("Rin")
+                        .option4("Sena")
+                        .correctAnswerIndex(2)
+                        .build();
+
+                Question q3 = Question.builder(1, "Care este cel mai inalt varf muntos din Romania?")
+                        .option1("Negoiu")
+                        .option2("Omu")
+                        .option3("Moldoveanu")
+                        .option4("Ceahlau")
+                        .correctAnswerIndex(3)
+                        .build();
+
+                Question q4 = Question.builder(1, "La ce mare are iesire Romania?")
+                        .option1("Marea Neagra")
+                        .option2("Marea Mediterana")
+                        .option3("Marea Baltica")
+                        .option4("Marea Adriatica")
+                        .correctAnswerIndex(1)
+                        .build();
+
+                Question q5 = Question.builder(1, "Care este cel mai mare oras ca populatie din Romania?")
+                        .option1("Cluj-Napoca")
+                        .option2("Timisoara")
+                        .option3("Iasi")
+                        .option4("Bucuresti")
+                        .correctAnswerIndex(4)
+                        .build();
+
+                Question q6 = Question.builder(1, "Care dintre urmatoarele tari se invecineaza cu Romania?")
+                        .option1("Grecia")
+                        .option2("Bulgaria")
+                        .option3("Albania")
+                        .option4("Macedonia")
+                        .correctAnswerIndex(2)
+                        .build();
+
+                Question q7 = Question.builder(1, "Care este cea mai mare delta din Europa?")
+                        .option1("Delta Dunarii")
+                        .option2("Delta Padului")
+                        .option3("Delta Volgai")
+                        .option4("Delta Ronului")
+                        .correctAnswerIndex(1)
+                        .build();
+
+                Question q8 = Question.builder(1, "In ce regiune istorica se afla orasul Brasov?")
+                        .option1("Moldova")
+                        .option2("Muntenia")
+                        .option3("Transilvania")
+                        .option4("Dobrogea")
+                        .correctAnswerIndex(3)
+                        .build();
+
+                Question q9 = Question.builder(1, "Care este cel mai mare lac natural din Romania?")
+                        .option1("Lacul Rosu")
+                        .option2("Lacul Sfanta Ana")
+                        .option3("Lacul Razelm")
+                        .option4("Lacul Bicaz")
+                        .correctAnswerIndex(3)
+                        .build();
+
+                Question q10 = Question.builder(1, "Care este cel mai lung rau care isi are tot cursul in Romania?")
+                        .option1("Mures")
+                        .option2("Olt")
+                        .option3("Siret")
+                        .option4("Prut")
+                        .correctAnswerIndex(2)
+                        .build();
+
+                Question[] questions = {q1, q2, q3, q4, q5, q6, q7, q8, q9, q10};
+
+                for (Question q : questions) {
+                    questionService.createQuestion(
+                            q.getTopicId(),
+                            q.getQuestionText(),
+                            q.getOption1(),
+                            q.getOption2(),
+                            q.getOption3(),
+                            q.getOption4(),
+                            q.getCorrectAnswerIndex()
+                    );
+                }
+                System.out.println("Intrebarile au fost adaugate cu succes!");
+            } else {
+                System.out.println("Eroare la crearea topicului de geografie.");
+            }
+            boolean topiccSuccess = topicService.createTopic("Matematica", "Intrebari foarte usoare de matematica");
+
+            if (topiccSuccess) {
+                Question q1 = Question.builder(2, "Cat face 5 + 3?")
+                        .option1("7")
+                        .option2("8")
+                        .option3("9")
+                        .option4("10")
+                        .correctAnswerIndex(2)
+                        .build();
+
+                Question q2 = Question.builder(2, "Care este rezultatul inmultirii 4 x 5?")
+                        .option1("15")
+                        .option2("25")
+                        .option3("20")
+                        .option4("10")
+                        .correctAnswerIndex(3)
+                        .build();
+
+                Question q3 = Question.builder(2, "Ce numar urmeaza dupa 9?")
+                        .option1("8")
+                        .option2("11")
+                        .option3("10")
+                        .option4("12")
+                        .correctAnswerIndex(3)
+                        .build();
+
+                Question[] questions = {q1, q2, q3};
+
+                for (Question q : questions) {
+                    questionService.createQuestion(
+                            q.getTopicId(),
+                            q.getQuestionText(),
+                            q.getOption1(),
+                            q.getOption2(),
+                            q.getOption3(),
+                            q.getOption4(),
+                            q.getCorrectAnswerIndex()
+                    );
+                }
+                System.out.println("Intrebarile au fost adaugate cu succes!");
+            } else {
+                System.out.println("Eroare la crearea topicului de matematica.");
+            }
